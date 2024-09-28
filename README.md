@@ -21,6 +21,7 @@ Makefile: para bajar wordpress y subirlo.
 Instrucciones básicas:
 
 1. correr *make wordpress*  luego eso bajará wordpress latest y descomprimirá en wordpress
+2. copiar .env.sample a .env y ajustar credenciales
 2. kamal setup (para nuevas instancias)
 3. kamal deploy (para nuevas versiones)
 
