@@ -1,0 +1,85 @@
+service: wordpress
+image: yourimage
+
+# Deploy to these servers.
+servers:
+  web:
+    hosts:
+    - XXX.XXX.XXX.XXX
+    options:
+      add-host: host.docker.internal:host-gateway
+    labels:
+      traefik.http.routers.wordpress-web.entrypoints: websecure
+      traefik.http.routers.wordpress-web.rule: "Host(`domainname.com`)"
+      traefik.http.routers.wordpress-web.tls: true
+      traefik.http.services.wordpress-web.loadbalancer.server.scheme: http
+      traefik.http.services.wordpress-web.loadbalancer.server.port: 8080
+      traefik.http.routers.wordpress-web.tls.certresolver: letsencrypt
+
+volumes:
+  - "/opt/kamal/wordpress-data:/var/www/html/public/wp-content/uploads"
+  - "/opt/letsencrypt/:/letsencrypt/"
+
+builder:
+  context: .
+  dockerfile: Dockerfile
+  local:
+    arch: amd64
+  cache:
+    type: registry
+
+registry:
+  server: registry.digitalocean.com
+  username: trolololo 
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+env:
+  clear:
+   WORDPRESS_DB_NAME: wordpress
+   PHP_OPCACHE_ENABLE: 1
+   SSL_MODE: "off" 
+  secret:
+    - WORDPRESS_DB_HOST
+    - WORDPRESS_DB_USER
+    - WORDPRESS_DB_PASSWORD
+    - WORDPRESS_DB_NAME
+
+accessories:
+  db:
+    image: mariadb:lts
+    host:  XXX.XXX.XXX.XXX
+    port: 3306
+    env:
+      clear:
+        MYSQL_ROOT_HOST: '%'
+      secret:
+        - MARIADB_ROOT_PASSWORD
+    files:
+      - db/wordpress.sql:/docker-entrypoint-initdb.d/setup.sql
+    volumes:
+      - "/opt/kamal/mysql-data:/var/lib/mysql"
+    options:
+      network: "private"
+
+
+traefik:
+  options:
+    publish:
+      - "443:443"
+      - "80:80"
+    volume:
+      - "/opt/letsencrypt/:/letsencrypt/"
+  args:
+    entryPoints.web.address: ":80"
+    entryPoints.websecure.address: ":443"
+    entryPoints.web.http.redirections.entryPoint.to: websecure
+    entryPoints.web.http.redirections.entryPoint.scheme: https
+    entryPoints.web.http.redirections.entrypoint.permanent: true
+    certificatesResolvers.letsencrypt.acme.email: "email@domain.com"
+    certificatesResolvers.letsencrypt.acme.storage: "/letsencrypt/acme.json"
+    certificatesResolvers.letsencrypt.acme.httpchallenge: true
+    certificatesResolvers.letsencrypt.acme.httpchallenge.entrypoint: web
+
+healthcheck:
+  cmd: "curl -k http://localhost:8443/healthcheck"
