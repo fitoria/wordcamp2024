@@ -1,6 +1,8 @@
 Despliega y Escala tu Sitio WordPress con Docker y Kamal: Agilidad y Consistencia en la Nube (Wordcamp Managua 2024)
 ====================================================================================================================
 
+[Link de la
+charla(https://docs.google.com/presentation/d/1Jlsxy6XME2mgcHxP7FQSO2dDK74e_YJvbN4uPdkxDJQ/edit?usp=sharing_)
 
 Archivos usados para charla en Wordcamp Managua 2024. Estrucutra:
 
