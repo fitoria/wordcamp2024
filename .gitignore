@@ -1,4 +1,5 @@
 .env
+.kamal/secrets
 .DS_Store
 wordpress/
 config/deploy-uam.yml

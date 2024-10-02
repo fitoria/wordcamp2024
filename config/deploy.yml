@@ -8,13 +8,6 @@ servers:
     - XXX.XXX.XXX.XXX
     options:
       add-host: host.docker.internal:host-gateway
-    labels:
-      traefik.http.routers.wordpress-web.entrypoints: websecure
-      traefik.http.routers.wordpress-web.rule: "Host(`domainname.com`)"
-      traefik.http.routers.wordpress-web.tls: true
-      traefik.http.services.wordpress-web.loadbalancer.server.scheme: http
-      traefik.http.services.wordpress-web.loadbalancer.server.port: 8080
-      traefik.http.routers.wordpress-web.tls.certresolver: letsencrypt
 
 volumes:
   - "/opt/kamal/wordpress-data:/var/www/html/public/wp-content/uploads"
@@ -23,8 +16,8 @@ volumes:
 builder:
   context: .
   dockerfile: Dockerfile
-  local:
-    arch: amd64
+  local: true
+  arch: amd64
   cache:
     type: registry
 
@@ -62,24 +55,11 @@ accessories:
     options:
       network: "private"
 
+proxy:
+  ssl: true
+  host: wordcamp.kronoscode.com
+  app_port: 8080
+  healthcheck:
+    interval: 5
+    path: "/healthcheck"
 
-traefik:
-  options:
-    publish:
-      - "443:443"
-      - "80:80"
-    volume:
-      - "/opt/letsencrypt/:/letsencrypt/"
-  args:
-    entryPoints.web.address: ":80"
-    entryPoints.websecure.address: ":443"
-    entryPoints.web.http.redirections.entryPoint.to: websecure
-    entryPoints.web.http.redirections.entryPoint.scheme: https
-    entryPoints.web.http.redirections.entrypoint.permanent: true
-    certificatesResolvers.letsencrypt.acme.email: "email@domain.com"
-    certificatesResolvers.letsencrypt.acme.storage: "/letsencrypt/acme.json"
-    certificatesResolvers.letsencrypt.acme.httpchallenge: true
-    certificatesResolvers.letsencrypt.acme.httpchallenge.entrypoint: web
-
-healthcheck:
-  cmd: "curl -k http://localhost:8443/healthcheck"

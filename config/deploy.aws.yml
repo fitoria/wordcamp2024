@@ -12,10 +12,3 @@ servers:
     - XXX.XXX.XYZ.XXX
     options:
       add-host: host.docker.internal:host-gateway
-    labels:
-      traefik.http.routers.wordpress-web.entrypoints: websecure
-      traefik.http.routers.wordpress-web.rule: "Host(`domainname.com`)"
-      traefik.http.routers.wordpress-web.tls: true
-      traefik.http.services.wordpress-web.loadbalancer.server.scheme: http
-      traefik.http.services.wordpress-web.loadbalancer.server.port: 8080
-      traefik.http.routers.wordpress-web.tls.certresolver: letsencrypt

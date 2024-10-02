@@ -20,10 +20,14 @@ db/wordpress.sql: archivo base para cargar base de datos inicial de nuestro proy
 Makefile: para bajar wordpress y subirlo.
 
 
+==========================
+Actualizado para Kamal 2.0
+==========================
+
 Instrucciones básicas:
 
 1. correr *make wordpress*  luego eso bajará wordpress latest y descomprimirá en wordpress
-2. copiar .env.sample a .env y ajustar credenciales
+2. copiar .kamal/secrets.sample a .kamal/secrts ajustar credenciales
 2. kamal setup (para nuevas instancias)
 3. kamal deploy (para nuevas versiones)
 
